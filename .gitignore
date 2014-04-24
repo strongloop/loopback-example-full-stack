@@ -13,3 +13,13 @@ results
 
 npm-debug.log
 node_modules
+public/bundle.js
+
+html5/build
+
+global.config.js
+local.config.js
+
+.DS_Store
+
+build

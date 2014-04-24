@@ -1,0 +1,43 @@
+{
+  "name": "loopback-example-full-stack",
+  "version": "0.0.1",
+  "description": "LoopBack browser and server example",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/strongloop/loopback-example-full-stack.git"
+  },
+  "keywords": [
+    "loopback",
+    "example",
+    "browser",
+    "server"
+  ],
+  "author": "Ritchie Martori",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/strongloop/loopback-example-full-stack/issues"
+  },
+  "homepage": "https://github.com/strongloop/loopback-example-full-stack",
+  "devDependencies": {
+    "grunt": "~0.4.4",
+    "grunt-contrib-uglify": "~0.4.0",
+    "shelljs": "~0.2.6",
+    "browserify": "~3.36.0",
+    "gulp": "~3.6.0",
+    "async": "~0.7.0",
+    "gulp-nodemon": "~1.0.2"
+  },
+  "dependencies": {
+    "loopback-datasource-juggler": "^1.3.11",
+    "loopback": "^1.8.0",
+    "loopback-explorer": "^1.1.0",
+    "ejs": "^1.0.0"
+  }
+}
