@@ -201,10 +201,11 @@ module.exports = function (grunt) {
     filerev: {
       dist: {
         src: [
-          // '<%= yeoman.dist %>/scripts/{,*/}*.js',
-          // '<%= yeoman.dist %>/styles/{,*/}*.css',
+          '<%= yeoman.dist %>/scripts/{,*/}*.js',
+          '<%= yeoman.dist %>/styles/{,*/}*.css',
           '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
-          '<%= yeoman.dist %>/styles/fonts/*'
+          '<%= yeoman.dist %>/styles/fonts/*',
+          '<%= yeoman.dist %>/fonts/*'
         ]
       }
     },
@@ -215,7 +216,7 @@ module.exports = function (grunt) {
     useminPrepare: {
       html: '<%= yeoman.app %>/index.html',
       options: {
-        root: '<%= yeoman.app %>/',
+        root: '<%= yeoman.dist %>/',
         staging: '<%= yeoman.stage %>/',
         dest: '<%= yeoman.dist %>',
         flow: {
@@ -236,9 +237,13 @@ module.exports = function (grunt) {
       css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
       options: {
         assetsDirs: [
-	  '<%= yeoman.dist %>/images',
-	  '<%= yeoman.dist %>/fonts',
-	  '<%= yeoman.dist %>/styles/fonts'
+          '<%= yeoman.dist %>',
+          '<%= yeoman.dist %>/views',
+          '<%= yeoman.dist %>/fonts',
+          '<%= yeoman.dist %>/images',
+          '<%= yeoman.dist %>/scripts',
+          '<%= yeoman.dist %>/styles',
+          '<%= yeoman.dist %>/styles/fonts'
         ]
       }
     },
