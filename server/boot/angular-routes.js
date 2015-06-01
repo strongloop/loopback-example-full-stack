@@ -4,7 +4,7 @@ module.exports = function(app) {
     .keys(routes)
     .forEach(function(route) {
       app.get(route, function(req, res) {
-        res.sendfile(app.get('indexFile'));
+        res.sendFile(app.get('indexFile'));
       });
     });
 };
