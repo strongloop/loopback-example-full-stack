@@ -22,24 +22,10 @@ module.exports = function (grunt) {
   // Configurable paths for the application
   var appConfig = {
     app: require('./bower.json').appPath || 'app',
-    dist: 'client/dist'
-  }
-    // Configurable paths for the application
-  var bowerJson = require('./bower.json');
-  var bowerRc;
-  try {
-      bowerRc = JSON.parse(fs.readFileSync('./.bowerrc'), 'utf-8');
-  } catch(err) {
-      // No .bowerrc.  Not a problem--it's optional!
-  }
-  var appConfig = {
-      app: (bowerJson && bowerJson.appPath) ? bowerJson.appPath : 'client/ngapp',
-      // vendor: (bowerRc && bowerRc.directory) ? bowerRc.directory : 'client/ngapp/vendor',
-      vendor: (bowerRc && bowerRc.directory) ? bowerRc.directory : 'bower_components',
-      dist: 'client/dist',
-      stage: '.tmp'
+    dist: 'client/dist',
+    stage: '.tmp',
+    vendor: readJSON('./.bowerrc') || 'bower_components'
   };
-
 
   // Define the configuration for all the tasks
   grunt.initConfig({
@@ -412,12 +398,32 @@ module.exports = function (grunt) {
 
   });
 
+  /**
+   * Utility method that parses a JSON file and returns its content as an object.  Exceptions are
+   * silently caught and yield a return value of empty object.
+   *
+   * @param filePath {String} Absolute file path or path relative to current directory.  This is
+   *                          the file whose contents readJSON() attempts to return.
+   * @param charSet {String} Character encoding the file is to be read with.  Defaults to 'utf-8'
+   *                         if omitted.  Optional.
+   */
+  function readJSON(filePath, charSet) {
+    var retVal;
+    try {
+      retVal = JSON.parse(fs.readFileSync(filePath), charSet||'utf-8');
+    } catch(e) {
+      // For this routine's sake, failure is an option, and it shall be a silent one.
+      retVal = {};
+    }
+
+    return retVal;
+  }
   grunt.registerTask('build-lbclient', 'Build lbclient browser bundle', function() {
     var done = this.async();
     buildClientBundle(process.env.NODE_ENV || 'development', done);
   });
 
-  grunt.registerTask('build-config', 'Build confg.js from JSON files', function() {
+  grunt.registerTask('build-config', 'Build config.js from JSON files', function() {
     var ngapp = path.resolve(__dirname, appConfig.app);
     var configDir = path.join(ngapp, 'config');
     var config = {};
