@@ -202,14 +202,14 @@ module.exports = function (grunt) {
     useminPrepare: {
       html: '<%= yeoman.app %>/index.html',
       options: {
-        root: '<%= yeoman.dist %>/',
+        root: '<%= yeoman.app %>/',
         staging: '<%= yeoman.stage %>/',
         dest: '<%= yeoman.dist %>',
         flow: {
           html: {
             steps: {
               js: ['concat', 'uglifyjs'],
-              css: ['cssmin']
+              css: ['concat', 'cssmin']
             },
             post: {}
           }
