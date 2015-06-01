@@ -24,7 +24,7 @@ module.exports = function (grunt) {
     app: require('./bower.json').appPath || 'app',
     dist: 'client/dist',
     stage: '.tmp',
-    vendor: readJSON('./.bowerrc') || 'bower_components'
+    vendor: readJSON('./.bowerrc').directory || 'bower_components'
   };
 
   // Define the configuration for all the tasks
