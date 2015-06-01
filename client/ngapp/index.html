@@ -6,17 +6,22 @@
 
     <!--
     The base allows us to use relative links to resources even when
-    this page was served from non-root URL, e.g. '/my/todos'
+    this page was served from non-root URL, e.g. '/my/todos'.  Angular
+    HTML5 routing mode also requires this element base to recognize
+    the point from which it should interpret routes as being a reference
+    within the application.
     -->
     <base href="/">
 
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
     <!-- build:css(client/ngapp) styles/vendor.css -->
     <!-- bower:css -->
     <!-- endbower -->
     <!-- endbuild -->
+
     <!-- build:css(client/ngapp) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
@@ -41,8 +46,8 @@
     <div ng-view></div>
 
     <!--[if lt IE 9]>
-    <script src="bower_components/es5-shim/es5-shim.js"></script>
-    <script src="bower_components/json3/lib/json3.min.js"></script>
+    <script src="vendor/es5-shim/es5-shim.js"></script>
+    <script src="vendor/json3/lib/json3.min.js"></script>
     <![endif]-->
 
     <!-- build:js(client/ng-app) scripts/vendor.js -->
@@ -55,16 +60,16 @@
     <!-- endbuild -->
 
     <!-- build:js({client,client/ngapp}) scripts/scripts.js -->
-        <script src="lbclient/browser.bundle.js"></script>
-        <script src="config/bundle.js"></script>
-        <script src="scripts/app.js"></script>
-        <script src="scripts/services/lbclient.js"></script>
-        <script src="scripts/controllers/home.js"></script>
-        <script src="scripts/controllers/user.js"></script>
-        <script src="scripts/controllers/todo.js"></script>
-        <script src="scripts/controllers/login.js"></script>
-        <script src="scripts/controllers/register.js"></script>
-        <script src="scripts/controllers/change.js"></script>
-        <!-- endbuild -->
+    <script src="lbclient/browser.bundle.js"></script>
+    <script src="config/bundle.js"></script>
+    <script src="scripts/app.js"></script>
+    <script src="scripts/services/lbclient.js"></script>
+    <script src="scripts/controllers/home.js"></script>
+    <script src="scripts/controllers/user.js"></script>
+    <script src="scripts/controllers/todo.js"></script>
+    <script src="scripts/controllers/login.js"></script>
+    <script src="scripts/controllers/register.js"></script>
+    <script src="scripts/controllers/change.js"></script>
+    <!-- endbuild -->
 </body>
 </html>
