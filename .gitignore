@@ -5,6 +5,7 @@
 *.out
 *.pid
 *.seed
+.idea/
 .DS_Store
 .tmp
 build
