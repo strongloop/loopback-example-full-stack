@@ -52,7 +52,7 @@ module.exports = function (grunt) {
       },
       styles: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
-        tasks: ['newer:copy:styles', 'autoprefixer']
+        tasks: ['autoprefixer']
       },
       gruntfile: {
         files: ['Gruntfile.js']
@@ -164,7 +164,7 @@ module.exports = function (grunt) {
       dist: {
         files: [{
           expand: true,
-          cwd: '<%= yeoman.stage %>/styles/',
+          cwd: '<%= yeoman.app %>/styles/',
           src: '{,*/}*.css',
           dest: '<%= yeoman.stage %>/styles/'
         }]
@@ -185,6 +185,11 @@ module.exports = function (grunt) {
 
     // Renames files for browser caching purposes
     filerev: {
+      options: {
+        encoding: 'utf8',
+        algorithm: 'md5',
+        length: 20
+      },
       dist: {
         src: [
           '<%= yeoman.dist %>/scripts/{,*/}*.js',
@@ -202,8 +207,8 @@ module.exports = function (grunt) {
     useminPrepare: {
       html: '<%= yeoman.app %>/index.html',
       options: {
-        root: '<%= yeoman.app %>/',
-        staging: '<%= yeoman.stage %>/',
+        root: '<%= yeoman.app %>',
+        staging: '<%= yeoman.stage %>',
         dest: '<%= yeoman.dist %>',
         flow: {
           html: {
@@ -242,7 +247,10 @@ module.exports = function (grunt) {
     //   dist: {
     //     files: {
     //       '<%= yeoman.dist %>/styles/main.css': [
-    //         '<%= yeoman.stage %>/styles/{,*/}*.css'
+    //         '<%= yeoman.dist %>/styles/main.css'
+    //       ],
+    //       '<%= yeoman.dist %>/styles/vendor.css': [
+    //         '<%= yeoman.dist %>/styles/vendor.css'
     //       ]
     //     }
     //   }
@@ -252,12 +260,28 @@ module.exports = function (grunt) {
     //     files: {
     //       '<%= yeoman.dist %>/scripts/scripts.js': [
     //         '<%= yeoman.dist %>/scripts/scripts.js'
+    //       ],
+    //       '<%= yeoman.dist %>/scripts/vendor.js': [
+    //         '<%= yeoman.dist %>/scripts/vendor.js'
     //       ]
     //     }
     //   }
     // },
     // concat: {
-    //   dist: {}
+    //   dist: {
+    //     files: {
+    //       '<%= yeoman.dist %>/styles/main.css': [
+    //         '<%= yeoman.stage %>/styles/{,*/}*.css'
+    //       ],
+    //       '<%= yeoman.dist %>/scripts/scripts.js': [
+    //         '<%= yeoman.app %>/scripts/{,*/}*.js'
+    //       ]
+    //       NOTE: No manual way to account for inferred vendor concatenation!!
+    //             There is no simple glob that yields the equivalent of what
+    //             wiredep places in index.html where useminPrepare finds it
+    //             to extract a file list from js and css vendor concat blocks...
+    //     }
+    //   }
     // },
 
     imagemin: {
@@ -266,6 +290,11 @@ module.exports = function (grunt) {
           expand: true,
           cwd: '<%= yeoman.app %>/images',
           src: '{,*/}*.{png,jpg,jpeg,gif}',
+          dest: '<%= yeoman.dist %>/images'
+        }, {
+          expand: true,
+          cwd: '<%= yeoman.stage %>/images',
+          src: 'generated/*.{png,jpg,jpeg,gif}',
           dest: '<%= yeoman.dist %>/images'
         }]
       }
@@ -277,6 +306,11 @@ module.exports = function (grunt) {
           expand: true,
           cwd: '<%= yeoman.app %>/images',
           src: '{,*/}*.svg',
+          dest: '<%= yeoman.dist %>/images'
+        }, {
+          expand: true,
+          cwd: '<%= yeoman.stage %>/images',
+          src: 'generated/*.svg',
           dest: '<%= yeoman.dist %>/images'
         }]
       }
@@ -335,33 +369,22 @@ module.exports = function (grunt) {
             '*.html',
             'views/{,*/}*.html',
             'images/{,*/}*.{webp}',
+            'styles/fonts/*',
             'fonts/*'
           ]
         }, {
           expand: true,
           cwd: '<%= yeoman.stage %>/images',
           dest: '<%= yeoman.dist %>/images',
-          src: ['generated/*']
+          src: 'generated/*.{webp}'
         }]
-      },
-      styles: {
-        expand: true,
-        cwd: '<%= yeoman.app %>/styles',
-        dest: '<%= yeoman.stage %>/styles/',
-        src: '{,*/}*.css'
       }
     },
 
     // Run some tasks in parallel to speed up the build process
     concurrent: {
-      server: [
-        'copy:styles'
-      ],
-      test: [
-        'copy:styles'
-      ],
       dist: [
-        'copy:styles',
+        'copy:dist',
         'imagemin',
         'svgmin'
       ]
@@ -487,7 +510,6 @@ module.exports = function (grunt) {
       'build-lbclient',
       'build-config',
       'wiredep',
-      'concurrent:server',
       'autoprefixer',
       'run:development',
       'watch'
@@ -503,7 +525,6 @@ module.exports = function (grunt) {
     'clean:server',
     'build-lbclient',
     'build-config',
-    'concurrent:test',
     'autoprefixer',
     'connect:test',
     'karma'
@@ -528,15 +549,14 @@ module.exports = function (grunt) {
     'build-lbclient',
     'build-config',
     'wiredep',
-    'useminPrepare',
-    'concurrent:dist',
     'autoprefixer',
-    'concat',
+    'useminPrepare',
+    'concat:generated',
     'ngAnnotate',
-    'copy:dist',
-    'cdnify',
-    'cssmin',
-    'uglify',
+    'concurrent:dist',
+    'cssmin:generated',
+    'uglify:generated',
+    // 'cdnify',
     'filerev',
     'usemin',
     'htmlmin'
