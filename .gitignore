@@ -5,11 +5,13 @@
 *.out
 *.pid
 *.seed
+.idea/
 .DS_Store
 .tmp
 build
 global.config.js
 bower_components
+client/ngapp/vendor
 client/dist
 ngapp/config/bundle.js
 html5/build

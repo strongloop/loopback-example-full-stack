@@ -22,7 +22,9 @@ module.exports = function (grunt) {
   // Configurable paths for the application
   var appConfig = {
     app: require('./bower.json').appPath || 'app',
-    dist: 'client/dist'
+    dist: 'client/dist',
+    stage: '.tmp',
+    vendor: readJSON('./.bowerrc').directory || 'bower_components'
   };
 
   // Define the configuration for all the tasks
@@ -50,7 +52,7 @@ module.exports = function (grunt) {
       },
       styles: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
-        tasks: ['newer:copy:styles', 'autoprefixer']
+        tasks: ['autoprefixer']
       },
       gruntfile: {
         files: ['Gruntfile.js']
@@ -61,7 +63,7 @@ module.exports = function (grunt) {
         },
         files: [
           '<%= yeoman.app %>/{,*/}*.html',
-          '.tmp/styles/{,*/}*.css',
+          '<%= yeoman.stage %>/styles/{,*/}*.css',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
       },
@@ -100,17 +102,17 @@ module.exports = function (grunt) {
           port: 9001,
           middleware: function (connect) {
             return [
-              connect.static('.tmp'),
+              connect.static('<%= yeoman.stage %>/'),
               connect.static('test'),
               connect().use(
-                '/bower_components',
-                connect.static('./bower_components')
+                '/vendor',
+                connect.static('<%= yeoman.vendor %>/')
               ),
               connect().use(
                 '/lbclient',
-                connect.static('./lbclient')
+                connect.static('client/lbclient/')
               ),
-              connect.static(appConfig.app)
+              connect.static('<%= yeoman.app %>/')
             ];
           }
         }
@@ -143,13 +145,13 @@ module.exports = function (grunt) {
         files: [{
           dot: true,
           src: [
-            '.tmp',
+            '<%= yeoman.stage %>',
             '<%= yeoman.dist %>/{,*/}*',
             '!<%= yeoman.dist %>/.git*'
           ]
         }]
       },
-      server: '.tmp',
+      server: '<%= yeoman.stage %>',
       lbclient: 'lbclient/browser.bundle.js',
       config: '<%= yeoman.app %>/config/bundle.js'
     },
@@ -162,9 +164,9 @@ module.exports = function (grunt) {
       dist: {
         files: [{
           expand: true,
-          cwd: '.tmp/styles/',
+          cwd: '<%= yeoman.app %>/styles/',
           src: '{,*/}*.css',
-          dest: '.tmp/styles/'
+          dest: '<%= yeoman.stage %>/styles/'
         }]
       }
     },
@@ -174,22 +176,27 @@ module.exports = function (grunt) {
       options: {
         cwd: '<%= yeoman.app %>',
         bowerJson: require('./bower.json'),
-        directory: './bower_components' //require('./.bowerrc').directory
+        directory: '<%= yeoman.vendor %>' //require('./.bowerrc').directory
       },
       app: {
-        src: ['<%= yeoman.app %>/index.html'],
-        ignorePath:  /..\//
+        src: ['<%= yeoman.app %>/index.html']
       }
     },
 
     // Renames files for browser caching purposes
     filerev: {
+      options: {
+        encoding: 'utf8',
+        algorithm: 'md5',
+        length: 20
+      },
       dist: {
         src: [
           '<%= yeoman.dist %>/scripts/{,*/}*.js',
           '<%= yeoman.dist %>/styles/{,*/}*.css',
           '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
-          '<%= yeoman.dist %>/styles/fonts/*'
+          '<%= yeoman.dist %>/styles/fonts/*',
+          '<%= yeoman.dist %>/fonts/*'
         ]
       }
     },
@@ -200,12 +207,14 @@ module.exports = function (grunt) {
     useminPrepare: {
       html: '<%= yeoman.app %>/index.html',
       options: {
+        root: '<%= yeoman.app %>',
+        staging: '<%= yeoman.stage %>',
         dest: '<%= yeoman.dist %>',
         flow: {
           html: {
             steps: {
               js: ['concat', 'uglifyjs'],
-              css: ['cssmin']
+              css: ['concat', 'cssmin']
             },
             post: {}
           }
@@ -218,7 +227,15 @@ module.exports = function (grunt) {
       html: ['<%= yeoman.dist %>/{,*/}*.html'],
       css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
       options: {
-        assetsDirs: ['<%= yeoman.dist %>','<%= yeoman.dist %>/images']
+        assetsDirs: [
+          '<%= yeoman.dist %>',
+          '<%= yeoman.dist %>/views',
+          '<%= yeoman.dist %>/fonts',
+          '<%= yeoman.dist %>/images',
+          '<%= yeoman.dist %>/scripts',
+          '<%= yeoman.dist %>/styles',
+          '<%= yeoman.dist %>/styles/fonts'
+        ]
       }
     },
 
@@ -230,7 +247,10 @@ module.exports = function (grunt) {
     //   dist: {
     //     files: {
     //       '<%= yeoman.dist %>/styles/main.css': [
-    //         '.tmp/styles/{,*/}*.css'
+    //         '<%= yeoman.dist %>/styles/main.css'
+    //       ],
+    //       '<%= yeoman.dist %>/styles/vendor.css': [
+    //         '<%= yeoman.dist %>/styles/vendor.css'
     //       ]
     //     }
     //   }
@@ -240,12 +260,28 @@ module.exports = function (grunt) {
     //     files: {
     //       '<%= yeoman.dist %>/scripts/scripts.js': [
     //         '<%= yeoman.dist %>/scripts/scripts.js'
+    //       ],
+    //       '<%= yeoman.dist %>/scripts/vendor.js': [
+    //         '<%= yeoman.dist %>/scripts/vendor.js'
     //       ]
     //     }
     //   }
     // },
     // concat: {
-    //   dist: {}
+    //   dist: {
+    //     files: {
+    //       '<%= yeoman.dist %>/styles/main.css': [
+    //         '<%= yeoman.stage %>/styles/{,*/}*.css'
+    //       ],
+    //       '<%= yeoman.dist %>/scripts/scripts.js': [
+    //         '<%= yeoman.app %>/scripts/{,*/}*.js'
+    //       ]
+    //       NOTE: No manual way to account for inferred vendor concatenation!!
+    //             There is no simple glob that yields the equivalent of what
+    //             wiredep places in index.html where useminPrepare finds it
+    //             to extract a file list from js and css vendor concat blocks...
+    //     }
+    //   }
     // },
 
     imagemin: {
@@ -254,6 +290,11 @@ module.exports = function (grunt) {
           expand: true,
           cwd: '<%= yeoman.app %>/images',
           src: '{,*/}*.{png,jpg,jpeg,gif}',
+          dest: '<%= yeoman.dist %>/images'
+        }, {
+          expand: true,
+          cwd: '<%= yeoman.stage %>/images',
+          src: 'generated/*.{png,jpg,jpeg,gif}',
           dest: '<%= yeoman.dist %>/images'
         }]
       }
@@ -265,6 +306,11 @@ module.exports = function (grunt) {
           expand: true,
           cwd: '<%= yeoman.app %>/images',
           src: '{,*/}*.svg',
+          dest: '<%= yeoman.dist %>/images'
+        }, {
+          expand: true,
+          cwd: '<%= yeoman.stage %>/images',
+          src: 'generated/*.svg',
           dest: '<%= yeoman.dist %>/images'
         }]
       }
@@ -295,9 +341,9 @@ module.exports = function (grunt) {
       dist: {
         files: [{
           expand: true,
-          cwd: '.tmp/concat/scripts',
+          cwd: '<%= yeoman.stage %>/concat/scripts',
           src: '*.js',
-          dest: '.tmp/concat/scripts'
+          dest: '<%= yeoman.stage %>/concat/scripts'
         }]
       }
     },
@@ -323,33 +369,22 @@ module.exports = function (grunt) {
             '*.html',
             'views/{,*/}*.html',
             'images/{,*/}*.{webp}',
+            'styles/fonts/*',
             'fonts/*'
           ]
         }, {
           expand: true,
-          cwd: '.tmp/images',
+          cwd: '<%= yeoman.stage %>/images',
           dest: '<%= yeoman.dist %>/images',
-          src: ['generated/*']
+          src: 'generated/*.{webp}'
         }]
-      },
-      styles: {
-        expand: true,
-        cwd: '<%= yeoman.app %>/styles',
-        dest: '.tmp/styles/',
-        src: '{,*/}*.css'
       }
     },
 
     // Run some tasks in parallel to speed up the build process
     concurrent: {
-      server: [
-        'copy:styles'
-      ],
-      test: [
-        'copy:styles'
-      ],
       dist: [
-        'copy:styles',
+        'copy:dist',
         'imagemin',
         'svgmin'
       ]
@@ -386,12 +421,32 @@ module.exports = function (grunt) {
 
   });
 
+  /**
+   * Utility method that parses a JSON file and returns its content as an object.  Exceptions are
+   * silently caught and yield a return value of empty object.
+   *
+   * @param filePath {String} Absolute file path or path relative to current directory.  This is
+   *                          the file whose contents readJSON() attempts to return.
+   * @param charSet {String} Character encoding the file is to be read with.  Defaults to 'utf-8'
+   *                         if omitted.  Optional.
+   */
+  function readJSON(filePath, charSet) {
+    var retVal;
+    try {
+      retVal = JSON.parse(fs.readFileSync(filePath), charSet||'utf-8');
+    } catch(e) {
+      // For this routine's sake, failure is an option, and it shall be a silent one.
+      retVal = {};
+    }
+
+    return retVal;
+  }
   grunt.registerTask('build-lbclient', 'Build lbclient browser bundle', function() {
     var done = this.async();
     buildClientBundle(process.env.NODE_ENV || 'development', done);
   });
 
-  grunt.registerTask('build-config', 'Build confg.js from JSON files', function() {
+  grunt.registerTask('build-config', 'Build config.js from JSON files', function() {
     var ngapp = path.resolve(__dirname, appConfig.app);
     var configDir = path.join(ngapp, 'config');
     var config = {};
@@ -455,7 +510,6 @@ module.exports = function (grunt) {
       'build-lbclient',
       'build-config',
       'wiredep',
-      'concurrent:server',
       'autoprefixer',
       'run:development',
       'watch'
@@ -471,7 +525,6 @@ module.exports = function (grunt) {
     'clean:server',
     'build-lbclient',
     'build-config',
-    'concurrent:test',
     'autoprefixer',
     'connect:test',
     'karma'
@@ -496,15 +549,14 @@ module.exports = function (grunt) {
     'build-lbclient',
     'build-config',
     'wiredep',
-    'useminPrepare',
-    'concurrent:dist',
     'autoprefixer',
-    'concat',
+    'useminPrepare',
+    'concat:generated',
     'ngAnnotate',
-    'copy:dist',
-    'cdnify',
-    'cssmin',
-    'uglify',
+    'concurrent:dist',
+    'cssmin:generated',
+    'uglify:generated',
+    // 'cdnify',
     'filerev',
     'usemin',
     'htmlmin'
