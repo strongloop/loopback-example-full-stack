@@ -68,13 +68,15 @@
   "dependencies": {
     "async": "~0.9.0",
     "compression": "^1.0.9",
-    "errorhandler": "^1.1.1",
-    "loopback": "^2.0.0",
-    "loopback-boot": "^2.0.0",
+    "cors": "^2.7.1",
+    "errorhandler": "^1.4.2",
+    "loopback": "^2.22.0",
+    "loopback-boot": "^2.12.1",
     "loopback-connector-mongodb": "^1.4.1",
     "loopback-datasource-juggler": "^2.0.0",
-    "loopback-explorer": "^1.2.4",
-    "proquint": "0.0.1"
+    "loopback-explorer": "^2.0.0",
+    "proquint": "0.0.1",
+    "serve-static": "^1.10.0"
   },
   "engines": {
     "node": ">=0.10.0"
