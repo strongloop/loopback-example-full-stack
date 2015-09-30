@@ -36,21 +36,19 @@ following features:
 
 The project is composed from multiple components.
 
- - `models/` contains definition of models that are shared by both the server
+ - `common/models/` contains definition of models that are shared by both the server
   and the client.
 
- - `rest/` contains the REST API server; it exposes the shared models via
-  REST API.
-
- - `lbclient/` provides an isomorphic loopback client with offline synchronization.
+ - `client/lbclient/` provides an isomorphic loopback client with offline synchronization.
   The client needs some client-only models for data synchronization. These
-  models are defined in `lbclient/models/`.
+  models are defined in `client/lbclient/models/`.
 
- - `ngapp/` is a single-page AngularJS application scaffolded using `yo
+ - `client/ngapp/` is a single-page AngularJS application scaffolded using `yo
   angular`, with a few modifications to make it work better in the full-stack
   project.
 
- - `server/` is the main HTTP server that brings together all other components.
+ - `server/` is the main HTTP server that brings together all other components. Also сontains the REST API server; it exposes the shared models via
+  REST API.
 
 ## Build
 
