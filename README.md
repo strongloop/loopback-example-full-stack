@@ -36,7 +36,7 @@ following features:
 
 The project is composed from multiple components.
 
- - `models/` contains definition of models that are shared by both the server
+ - `common/models/` contains definition of models that are shared by both the server
   and the client.
 
  - `rest/` contains the REST API server; it exposes the shared models via
