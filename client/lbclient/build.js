@@ -12,7 +12,7 @@ var browserify = require('browserify');
 var boot = require('loopback-boot');
 
 module.exports = function buildBrowserBundle(env, callback) {
-  var b = browserify({ basedir: __dirname });
+  var b = browserify({ basedir: __dirname, ignoreMissing: true });
   b.require('./' + pkg.main, { expose: 'lbclient' });
 
   try {
