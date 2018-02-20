@@ -72,7 +72,7 @@
     "cors": "^2.7.1",
     "loopback": "^3.0.0",
     "loopback-boot": "^2.12.1",
-    "loopback-component-explorer": "^2.1.0",
+    "loopback-component-explorer": "^5.3.0",
     "loopback-connector-mongodb": "^1.4.1",
     "loopback-datasource-juggler": "^2.0.0",
     "proquint": "0.0.1",
